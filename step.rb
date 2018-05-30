@@ -20,6 +20,8 @@ begin
   Log.success('authenticated')
   ###
 
+  Portal::ProfileClient.print_profiles
+
   # Download certificates
   Log.info('Downloading Certificates')
 

@@ -5,6 +5,44 @@ require_relative 'app_client'
 module Portal
   # ProfileClient ...
   class ProfileClient
+    def self.print_profiles
+      profiles = []
+      run_and_handle_portal_function { profiles = Spaceship::Portal.provisioning_profile.all(mac: false, xcode: true) }
+
+      xcode_managed_profiles = []
+      manual_profiles = []
+      profiles.each do |p|
+        next if p.sub_platform.to_s.casecmp('tvos').zero?
+
+        xcode_managed_profiles << p if p.managed_by_xcode?
+        manual_profiles << p unless p.managed_by_xcode?
+      end
+
+      xcode_managed_profiles_by_method = {}
+      xcode_managed_profiles.each do |p|
+        xcode_managed_profiles_by_method[p.distribution_method] = [] unless xcode_managed_profiles_by_method[p.distribution_method]
+        xcode_managed_profiles_by_method[p.distribution_method] << p
+      end
+
+      manual_profiles_by_method = {}
+      manual_profiles.each do |p|
+        manual_profiles_by_method[p.distribution_method] = [] unless manual_profiles_by_method[p.distribution_method]
+        manual_profiles_by_method[p.distribution_method] << p
+      end
+
+      Log.debug('Xcode managed profiles:')
+      xcode_managed_profiles_by_method.each do |method, ps|
+        Log.debug("  #{method}:")
+        ps.each { |p| Log.debug("  * #{p.name} (#{p.app.bundle_id})") }
+      end
+
+      Log.debug('Manual profiles:')
+      manual_profiles_by_method.each do |method, ps|
+        Log.debug("  #{method}:")
+        ps.each { |p| Log.debug("  * #{p.name} (#{p.app.bundle_id})") }
+      end
+    end
+
     def self.ensure_xcode_managed_profile(bundle_id, entitlements, distribution_type, portal_certificate, platform)
       profiles = ProfileClient.fetch_profiles(distribution_type, true, platform)
 

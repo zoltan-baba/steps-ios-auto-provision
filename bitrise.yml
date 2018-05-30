@@ -134,7 +134,7 @@ workflows:
         - scheme: $BITRISE_SCHEME
         - configuration: $BITRISE_CONFIGURATION
         - verbose_log: "yes"
-        - generate_profiles: "yes"
+        # - generate_profiles: "yes"
     - script:
         title: Output test
         inputs:
