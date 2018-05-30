@@ -8,6 +8,9 @@ module Portal
     def self.ensure_xcode_managed_profile(bundle_id, entitlements, distribution_type, portal_certificate, platform)
       profiles = ProfileClient.fetch_profiles(distribution_type, true, platform)
 
+      Log.debug("Xcode managed profiles for #{distribution_type} distribution:")
+      profiles.each { |p| Log.debug("* #{p.name} (#{p.bundle_id})") }
+
       # Separate matching profiles
       # full_matching_profiles contains profiles which bundle id equals to the provided bundle_id
       # matching_profiles contains profiles which bundle id glob matches to the provided bundle_id
