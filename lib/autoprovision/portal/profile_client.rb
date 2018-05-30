@@ -9,7 +9,7 @@ module Portal
       profiles = ProfileClient.fetch_profiles(distribution_type, true, platform)
 
       Log.debug("Xcode managed profiles for #{distribution_type} distribution:")
-      profiles.each { |p| Log.debug("* #{p.name} (#{p.bundle_id})") }
+      profiles.each { |p| Log.debug("* #{p.name} (#{p.app.bundle_id})") }
 
       # Separate matching profiles
       # full_matching_profiles contains profiles which bundle id equals to the provided bundle_id
@@ -86,6 +86,10 @@ module Portal
       profile_name = "Bitrise #{distribution_type} - (#{app.bundle_id})"
 
       profiles = ProfileClient.fetch_profiles(distribution_type, false, platform)
+
+      Log.debug("Manual profiles for #{distribution_type} distribution:")
+      profiles.each { |p| Log.debug("* #{p.name} (#{p.app.bundle_id})") }
+
       profiles = profiles.select { |profile| profile.app.bundle_id == app.bundle_id && profile.name == profile_name }
 
       if profiles.empty?
